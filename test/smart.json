@@ -1,0 +1,12 @@
+{
+  "meteor": {
+    "git": "https://github.com/meteor/meteor.git",
+    "branch": "master"
+  },
+  "packages": {
+    "localstore": {
+      "git": "https://github.com/awwx/meteor-localstore.git"
+    },
+    "when": {}
+  }
+}

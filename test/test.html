@@ -1,0 +1,42 @@
+<head>
+  <title>tests</title>
+</head>
+
+<body>
+  {{>renderPage}}
+</body>
+
+<template name="renderPage">
+  {{#if showHome}}
+    {{>test1_home}}
+  {{/if}}
+  {{#if showChild1}}
+    {{>test1_child1}}
+  {{/if}}
+  {{#if showChild2}}
+    {{>test1_child2}}
+  {{/if}}
+</template>
+
+<template name="test1_home">
+  <h1>Test LocalStore</h1>
+
+  <div>
+    Test status:
+    <span id="test-result">{{#if done}}OK{{else}}testing{{/if}}
+  </div>
+
+  <br>
+
+  {{#constant}}
+    <div id="iframes"></div>
+  {{/constant}}
+</template>
+
+<template name="test1_child1">
+  <p>child 1</p>
+</template>
+
+<template name="test1_child2">
+  <p>child 2</p>
+</template>
