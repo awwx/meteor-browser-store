@@ -1,0 +1,8 @@
+{
+  "name": "localstore",
+  "description": "reactive local client storage, shared across browser windows",
+  "homepage": "https://github.com/awwx/meteor-localstore",
+  "author": "Andrew Wilcox",
+  "version": "0.0.1",
+  "git": "https://github.com/awwx/meteor-localstore.git"
+}
