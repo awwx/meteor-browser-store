@@ -12,7 +12,7 @@ This means that if you are watching a LocalStore variable in one browser tab
 
     Template.mytemplate.foo = function () { return Meteor.LocalStore.get('foo'); };
 
-and set it in another tab
+and set it in another tab open to the same application
 
     Meteor.LocalStore.set('foo', 'hello');
 
