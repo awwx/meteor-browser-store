@@ -7,14 +7,14 @@ browser tabs.
 Meteor.BrowserStore has the same API as Meteor's Session, but is
 persistent (stored locally in the browser using
 [Web Storage](http://www.w3.org/TR/webstorage/), also known as "Local
-Storage") and is reactively shared across browser windows on the same
-device.
+Storage") and is reactively shared across browser windows in the same
+browser.
 
-This means that if you are watching a BrwoserStore variable in one
+This means that if you are watching a BrowserStore variable in one
 browser tab
 
     Template.mytemplate.foo = function () {
-      return Meteor.BrwoserStore.get('foo');
+      return Meteor.BrowserStore.get('foo');
     };
 
 and set it in another tab open to the same application
@@ -35,8 +35,8 @@ down.
 
 Web applications opened with a URL with the same host and port will
 see the same store, while applications run on different hosts or ports
-will have completely different stores (this is protection supplied by
-the browser's same orgin policy).  Thus pages opened on
+will have completely separate stores (this is protection supplied by
+the browser's same origin policy).  Thus pages opened on
 "http://app-one.meteor.com/" and "http://app-one.meteor.com/foo/bar"
 will see the same store, while a page opened on
 "http://app-two.meteor.com/" will see a different store.
