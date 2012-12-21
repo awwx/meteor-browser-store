@@ -4,9 +4,8 @@ Testing
 Tests that a browser successfully communicates a local storage change
 between iframes.
 
-To run, change into this test directory, and start Meteor:
+To run, change into this test directory, start Meteor:
 
-    $ mrt install
     $ mrt
 
 and then open the browser you want to test on http://localhost:3000/.

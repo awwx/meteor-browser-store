@@ -1,7 +1,7 @@
 Package.describe({
-  summary: "reactive local client storage, shared across browser windows"
+  summary: "Persistent local browser storage, reactively shared across browser tabs"
 });
 
 Package.on_use(function (api) {
-  api.add_files(['localstore.js'], 'client');
+  api.add_files(['browser-store.js'], 'client');
 });

@@ -1,4 +1,4 @@
-localStoragePrefix = 'Meteor.LocalStore.'
+localStoragePrefix = 'Meteor.BrowserStore.'
 
 itemKey = (localStorageKey) ->
   unless _.isString(localStorageKey)
@@ -21,7 +21,7 @@ itemKey = (localStorageKey) ->
   };
 `
 
-Meteor.LocalStore = _.extend({}, {
+Meteor.BrowserStore = _.extend({}, {
     keys: {}, # key -> value
     keyDeps: {}, # key -> _ContextSet
     keyValueDeps: {}, # key -> value -> _ContextSet
@@ -83,7 +83,7 @@ Meteor.LocalStore = _.extend({}, {
           typeof value !== 'boolean' &&
           typeof value !== 'undefined' &&
           value !== null)
-        throw new Error("LocalStore.equals: value must be scalar");
+        throw new Error("BrowserStore.equals: value must be scalar");
       var serializedValue = stringify(value);
 
       if (context) {
@@ -138,13 +138,13 @@ Meteor.LocalStore = _.extend({}, {
 
 on_storage = (event) ->
   if key = itemKey(event.key)
-    Meteor.LocalStore._cacheSet(key, event.newValue)
+    Meteor.BrowserStore._cacheSet(key, event.newValue)
   undefined
 
 Meteor.startup ->
 
-  Meteor.LocalStore._each (key, val) ->
-    Meteor.LocalStore._cacheSet(key, val)
+  Meteor.BrowserStore._each (key, val) ->
+    Meteor.BrowserStore._cacheSet(key, val)
 
   if window.addEventListener
     window.addEventListener 'storage', on_storage, false

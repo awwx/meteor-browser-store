@@ -2,7 +2,7 @@
 (function() {
   var itemKey, localStoragePrefix, on_storage;
 
-  localStoragePrefix = 'Meteor.LocalStore.';
+  localStoragePrefix = 'Meteor.BrowserStore.';
 
   itemKey = function(localStorageKey) {
     if (!_.isString(localStorageKey)) {
@@ -29,7 +29,7 @@
 ;
 
 
-  Meteor.LocalStore = _.extend({}, {
+  Meteor.BrowserStore = _.extend({}, {
     keys: {},
     keyDeps: {},
     keyValueDeps: {},
@@ -88,7 +88,7 @@
           typeof value !== 'boolean' &&
           typeof value !== 'undefined' &&
           value !== null)
-        throw new Error("LocalStore.equals: value must be scalar");
+        throw new Error("BrowserStore.equals: value must be scalar");
       var serializedValue = stringify(value);
 
       if (context) {
@@ -149,14 +149,14 @@
   on_storage = function(event) {
     var key;
     if (key = itemKey(event.key)) {
-      Meteor.LocalStore._cacheSet(key, event.newValue);
+      Meteor.BrowserStore._cacheSet(key, event.newValue);
     }
     return void 0;
   };
 
   Meteor.startup(function() {
-    Meteor.LocalStore._each(function(key, val) {
-      return Meteor.LocalStore._cacheSet(key, val);
+    Meteor.BrowserStore._each(function(key, val) {
+      return Meteor.BrowserStore._cacheSet(key, val);
     });
     if (window.addEventListener) {
       window.addEventListener('storage', on_storage, false);

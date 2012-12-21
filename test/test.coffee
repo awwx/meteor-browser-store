@@ -64,11 +64,11 @@ if Meteor.isClient
       $('#child1')[0].contentWindow.postMessage 'begin', '*'
     )
 
-    Meteor.LocalStore.clear()
+    Meteor.BrowserStore.clear()
     ok_to_start_children.resolve()
 
   child1_begin = ->
-    Meteor.LocalStore.set('foo', 1234)
+    Meteor.BrowserStore.set('foo', 1234)
 
   child1_startup = ->
     add_event(
@@ -83,7 +83,7 @@ if Meteor.isClient
 
   child2_startup = ->
     Meteor.autorun ->
-      if Meteor.LocalStore.equals('foo', 1234)
+      if Meteor.BrowserStore.equals('foo', 1234)
         window.parent.postMessage 'child2 got it', '*'
 
     window.parent.postMessage 'child2 is awake', '*'

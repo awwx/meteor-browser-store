@@ -80,11 +80,11 @@
       _when.join(child1_awake, child2_awake).then(function() {
         return $('#child1')[0].contentWindow.postMessage('begin', '*');
       });
-      Meteor.LocalStore.clear();
+      Meteor.BrowserStore.clear();
       return ok_to_start_children.resolve();
     };
     child1_begin = function() {
-      return Meteor.LocalStore.set('foo', 1234);
+      return Meteor.BrowserStore.set('foo', 1234);
     };
     child1_startup = function() {
       add_event('message', (function(event) {
@@ -97,7 +97,7 @@
     };
     child2_startup = function() {
       Meteor.autorun(function() {
-        if (Meteor.LocalStore.equals('foo', 1234)) {
+        if (Meteor.BrowserStore.equals('foo', 1234)) {
           return window.parent.postMessage('child2 got it', '*');
         }
       });
