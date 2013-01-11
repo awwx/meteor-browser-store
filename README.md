@@ -4,6 +4,31 @@ BrowserStore
 Persistent local browser storage for Meteor, reactively shared across
 browser tabs.
 
+
+Problems
+--------
+
+When an item is set in one browser window, the new value is broadcast
+to any other browser windows that may be open (using the browser's
+"storage" event).  Currently when a window receives the message, it
+uses the value *in the message* as the new value of the item.  This is
+buggy because the window (or another window) might have changed the
+item's value itself between the time the first window set its value
+and the second window received the message.
+
+A solution would be to re-lookup the current value of the item on
+receipt of the storage event (the message would be used only as a
+trigger that the value may have changed).  However due to
+[Chrome bug #152424](http://code.google.com/p/chromium/issues/detail?id=152424),
+the second window may not see the new value when it reads from local storage.
+
+So for Chrome at least, the only reliable solution may be to use a
+store with transactions (Web SQL Database or IndexedDB)...
+
+
+Description
+-----------
+
 Meteor.BrowserStore has the same API as Meteor's Session, but is
 persistent (stored locally in the browser using
 [Web Storage](http://www.w3.org/TR/webstorage/), also known as "Local
