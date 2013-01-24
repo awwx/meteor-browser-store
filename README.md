@@ -8,8 +8,8 @@ browser tabs.
 Description
 -----------
 
-Meteor.BrowserStore is designed to store small amounts of key/value
-data in the browser.
+Meteor.BrowserStore is designed to persistently store small amounts of
+key/value data in the browser.
 
 The data is shared reactively across browser tabs and windows (in the
 same browser), so if you are watching a BrowserStore variable in one
@@ -85,7 +85,7 @@ Implementation
 For browsers where it is available, data is stored in [Web
 Storage](http://www.w3.org/TR/webstorage/) (also known as "Local
 Storage").  In IE 6 and 7, data is stored using IE's "userdata"
-feature, implemented by the localstorage_polyfill package.
+feature, using the localstorage_polyfill package.
 
 Changes are polled for in Chrome (due to
 [Chrome bug #152424](http://code.google.com/p/chromium/issues/detail?id=152424))
@@ -95,11 +95,11 @@ In other browsers polling isn't necessary because we are able to
 listen for the storage event instead.
 
 Items are stored in the browser's local storage with a key prefix of
-"Meteor.BrowserStore.".  Setting an item to a `null` or `undefined`
-value removes the item from the store.
+"Meteor.BrowserStore.".
 
 For the non-polling implementation items with the key prefix are
 loaded when the Meteor application starts up in the browser.
 
-When polling, the item is read the first it is accessed with `get` or
-`equals`, and then that key is added to the list of keys to poll for.
+When polling, the item is read the first time it is accessed with
+`get` or `equals`, and then that key is added to the list of keys to
+poll for.
