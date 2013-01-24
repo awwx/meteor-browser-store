@@ -1,3 +1,20 @@
+# packages/localstorage-polyfill doesn't attempt to implement storage
+# event.
+
+polyfilled = not window.localStorage.length?
+
+
+# Chrome bug http://code.google.com/p/chromium/issues/detail?id=152424
+# means we can't rely on getting the current value the first time.
+
+chrome = $.browser.chrome
+
+
+# Can't rely on storage event.
+
+polling = polyfilled or chrome
+
+
 localStoragePrefix = 'Meteor.BrowserStore.'
 
 itemKey = (localStorageKey) ->
@@ -21,6 +38,8 @@ itemKey = (localStorageKey) ->
   };
 `
 
+keysToPoll = []
+
 Meteor.BrowserStore = _.extend({}, {
     keys: {}, # key -> value
     keyDeps: {}, # key -> _ContextSet
@@ -31,6 +50,9 @@ Meteor.BrowserStore = _.extend({}, {
         localStorage.setItem(localStoragePrefix + key, value)
       else
         localStorage.removeItem(localStoragePrefix + key)
+
+    _fetch: (key) ->
+      localStorage.getItem(localStoragePrefix + key)
 
     _cacheSet: `function (key, serializedValue) {
       var self = this;
@@ -58,15 +80,21 @@ Meteor.BrowserStore = _.extend({}, {
       self._save(key, value);
     }`,
 
-    get: `function (key) {
-      var self = this;
-      self._ensureKey(key);
-      self.keyDeps[key].addCurrentContext();
-      return parse(self.keys[key]);
-    }`,
+    _initialFetch: (key) ->
+      if polling and key not in keysToPoll
+        keysToPoll.push(key)
+        @_refresh key
+      undefined
+
+    get: (key) ->
+      @_initialFetch(key)
+      @_ensureKey(key)
+      @keyDeps[key].addCurrentContext();
+      return parse(@keys[key])
 
     equals: `function (key, value) {
       var self = this;
+      self._initialFetch(key)
       var context = Meteor.deps.Context.current;
 
       // We don't allow objects (or arrays that might include objects) for
@@ -116,39 +144,48 @@ Meteor.BrowserStore = _.extend({}, {
       }
     }`,
 
-    _each: `function (callback) {
-      var len = localStorage.length;
-      var key, localStorageKey;
-      for (var i = 0;  i < len;  ++i) {
+    _each: (callback) ->
+      if polyfilled
+        throw new Error('_each is not supported in the polyfill implementation')
+      len = localStorage.length
+      for i in [0...len]
         localStorageKey = localStorage.key(i)
         key = itemKey(localStorageKey)
-        if (key) {
-          callback(key, localStorage.getItem(localStorageKey));
-        }
-      }
-    }`,
+        if key
+          callback(key, localStorage.getItem(localStorageKey))
 
-    clear: ->
-      toRemove = []
-      @_each (key) => toRemove.push(key)
-      @set(key, null) for key in toRemove
+    ## not supported in polyfill implementation
+    # clear: ->
+    #   toRemove = []
+    #   @_each (key) => toRemove.push(key)
+    #   @set(key, null) for key in toRemove
 
+    _refresh: (key) ->
+      @_cacheSet key, @_fetch(key)
+
+    _poll: ->
+      @_refresh key for key in keysToPoll
+      undefined
+
+    _onStorageEvent: (event) ->
+      if key = itemKey(event.key)
+        @_refresh key
+      undefined
+
+    _listenForStorageEvent: ->
+      @_each (key, val) => @_cacheSet(key, val)
+
+      if window.addEventListener
+        window.addEventListener 'storage', _.bind(@_onStorageEvent, @), false
+      else if window.attachEvent
+        window.attachEvent 'onstorage', _.bind(@_onStorageEvent, @)
+
+    _startup: ->
+      if polling
+        setInterval(_.bind(@_poll, @), 3000)
+      else
+        @_listenForStorageEvent()
   })
 
 
-on_storage = (event) ->
-  if key = itemKey(event.key)
-    Meteor.BrowserStore._cacheSet(key, event.newValue)
-  undefined
-
-Meteor.startup ->
-
-  Meteor.BrowserStore._each (key, val) ->
-    Meteor.BrowserStore._cacheSet(key, val)
-
-  if window.addEventListener
-    window.addEventListener 'storage', on_storage, false
-  else if window.attachEvent
-    window.attachEvent 'onstorage', on_storage
-
-  undefined
+Meteor.startup -> Meteor.BrowserStore._startup()
