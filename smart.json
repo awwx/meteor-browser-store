@@ -3,6 +3,6 @@
   "description": "Persistent local browser storage, reactively shared across browser tabs",
   "homepage": "https://github.com/awwx/meteor-browser-store#readme",
   "author": "Andrew Wilcox",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "git": "https://github.com/awwx/meteor-browser-store.git"
 }
