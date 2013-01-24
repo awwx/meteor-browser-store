@@ -48,7 +48,7 @@ long as you use the same host and port such as
 API
 ---
 
-BrowserStore has a similar API to Meteor's Session:
+BrowserStore has an API similar to Meteor's Session:
 
 
     Meteor.BrowserStore.set(key, value)
